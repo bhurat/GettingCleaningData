@@ -4,7 +4,7 @@ I read the files subject_test.txt, X_test.txt, y_test.txt, subject_train.txt, X_
 
 From there, subsetted only the columns dealing with means and changed the activity numbers to the names they represent. 
 
-From there, I created a new table which summarized each column by taking the mean of each column based on subject # and the activity they were doing. 
+From there, I created a new table which summarized each column by taking the mean of each column based on subject # and the activity they were doing. The table is sorted by subject #
 
 ### column variables
 1      "Subject”
