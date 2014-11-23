@@ -1,4 +1,8 @@
 runal<- function() {
+        # First, program reads the files and stores them in testdata and traindata
+        # as separate columns. Each gets column names from features, though first
+        # two columns are named "subject" and "activity", with features naming all
+        # columns after that. Lastly, the two are combined to form totaldata
         options(stringsAsFactors = FALSE)
         features<-read.table("features.txt")
         testdat1<-read.table("./test/subject_test.txt",header = FALSE)
@@ -16,11 +20,14 @@ runal<- function() {
         names(traindata)[3:563]<-features[,2]
         names(traindata)[564]<-"test.or.train"
         totaldata<-rbind(testdata,traindata)
-        
+        # From here, meansdData is formed by taking only the columns which deal
+        # with either the mean or the standard deviation measurements. 
         meansdData<-totaldata[,c(1:8,43:48,83:88,123:128,163:168,203:204,216:217,
                                  229:230,242:243,255:256,268:273,347:352,426:431,
                                  505:506,518:519,531:532,544:545,ncol(totaldata))]
-      for (i in 1:nrow(meansdData)){
+        # This 'for' loop renames the 'activity' column values to the activity that
+        # the number was supposed to represent.
+        for (i in 1:nrow(meansdData)){
               if (meansdData[i,2] == "1") {meansdData[i,2]<-"Walking"}
               if (meansdData[i,2] == "2") {meansdData[i,2]<-"Walking Upstairs"}
               if (meansdData[i,2] == "3") {meansdData[i,2]<-"Walking Downstairs"}
@@ -28,17 +35,28 @@ runal<- function() {
               if (meansdData[i,2] == "5") {meansdData[i,2]<-"Standing"}
               if (meansdData[i,2] == "6") {meansdData[i,2]<-"Laying"}
       }
-      #return(meansdData)
+      # Initializing vector with activity names and summData data frame to store
+      # new table
+      
       activity<-c("Walking","Walking Upstairs","Walking Downstairs","Sitting",
                   "Standing","Laying")
       summData<-data.frame()
+      # Here, we have two 'for' loops. First 'for' loop goes through each 30 subjects
+      # and the second for loop goes through each activity. Inside them, we
+      # calculated the means of the columns based on subject number and activity.
+      # From there, bound them as a row with the subject and activity to summData 
+      
       for (i in 1:30){
               for(j in activity) {
-                      colmeans<-colMeans(meansdData[(meansdData$subject==i)&(meansdData$activity==j),3:(ncol(meansdData)-1)])
+                      colmeans<-colMeans(meansdData[(meansdData$subject==i)&
+                                                            (meansdData$activity==j) #rows
+                                                    ,3:(ncol(meansdData)-1)]) #columns
                       rowtotal<-c(i,j,colmeans)
                       summData<-rbind(summData,rowtotal)
               }
       }
+      #Here we change names of summData to descriptive names
+      
       names(summData)<-c("Subject","Activity",
       "Body Acceleration mean - X",
       "Body Acceleration mean - Y",
@@ -106,6 +124,8 @@ runal<- function() {
       "FFT Body Gyro Magnitude Standard Deviation",
       "FFT Body Gyro Jerk Magnitude mean",
       "FFT Body Gyro Jerk Magnitude Standard Deviation")
+      
+      #Lastly, we reorder summData by subject number and return it.
       summData<-summData[order(as.numeric(summData$Subject)),]
       return(summData)
 }
